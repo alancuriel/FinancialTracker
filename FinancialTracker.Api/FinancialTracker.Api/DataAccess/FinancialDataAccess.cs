@@ -15,7 +15,7 @@ public class FinancialDataAccess
         this.configuration = configuration;
     }
 
-    public async Task<Account> GetAccountAsync(string accountId)
+    public async Task<Account> GetAccountAsync(Guid accountId)
     {
         var accountCollection = ConnectToMongo<Account>(AccountsCollection);
         var results = await accountCollection.FindAsync(c => c.Id == accountId);
@@ -46,7 +46,17 @@ public class FinancialDataAccess
         return transactions.Select(t => t.Id.ToString()).ToList();
     }
 
-    public async Task<string> CreateAccount(Account account)
+    public async Task CreateAccountsAsync(List<KeyValuePair<int, Account>> accounts)
+    {
+        IMongoCollection<Account> accountsCollection =
+            ConnectToMongo<Account>(AccountsCollection);
+
+        var accountsToWrite = accounts.Select(acc => new InsertOneModel<Account>(acc.Value));
+        var results = await accountsCollection.BulkWriteAsync(accountsToWrite);
+
+    }
+
+    public async Task<Guid> CreateAccount(Account account)
     {
         var accountCollection = ConnectToMongo<Account>(AccountsCollection);
 
@@ -62,5 +72,4 @@ public class FinancialDataAccess
     }
 
     
-
 }

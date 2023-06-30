@@ -79,16 +79,16 @@ public class AuthenicationService
     }
 
     public async Task<LoginResponse> LoginAsync(LoginRequest request)
+    {
+        try
         {
-            try
+            User? user = await userManager.FindByEmailAsync(request.Email);
+            if (user is null || user.Email is null)
             {
-                User? user = await userManager.FindByEmailAsync(request.Email);
-                if (user is null || user.Email is null)
-                {
-                    return new LoginResponse { Message = "Invalid email/password", Success = false };
-                }
+                return new LoginResponse { Message = "Invalid email/password", Success = false };
+            }
 
-                List<Claim> claims = new()
+            List<Claim> claims = new()
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Email),
@@ -96,41 +96,46 @@ public class AuthenicationService
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
                 };
 
-                IList<string> roles = await userManager
-                    .GetRolesAsync(user);
+            IList<string> roles = await userManager
+                .GetRolesAsync(user);
 
 
-                IEnumerable<Claim> roleClaims = roles.Select(x => new Claim(ClaimTypes.Role, x));
+            IEnumerable<Claim> roleClaims = roles.Select(x => new Claim(ClaimTypes.Role, x));
 
-                claims.AddRange(roleClaims);
+            claims.AddRange(roleClaims);
 
-                string keyStr = config["JWT_SECRET_KEY"]!;
+            string keyStr = config["JWT_SECRET_KEY"]!;
 
-                SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(keyStr));
-                SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
-                DateTime expires = DateTime.Now.AddMinutes(30);
+            SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(keyStr));
+            SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
+            DateTime expires = DateTime.Now.AddMinutes(30);
 
-                var token = new JwtSecurityToken(
-                    issuer: "https://localhost:5001",
-                    audience: "https://localhost:5001",
-                    claims,
-                    signingCredentials: creds,
-                    expires: expires
-                );
+            var token = new JwtSecurityToken(
+                issuer: "https://localhost:5001",
+                audience: "https://localhost:5001",
+                claims,
+                signingCredentials: creds,
+                expires: expires
+            );
 
-                return new LoginResponse
-                {
-                    AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
-                    Message = "Login Successful",
-                    Email = user.Email,
-                    Success = true,
-                    UserId = user.Id.ToString()
-                };
-            }
-            catch (System.Exception ex)
+            return new LoginResponse
             {
-                Console.Write(ex.Message);
-                return new LoginResponse { Success = false, Message = ex.Message };
-            }
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+                Message = "Login Successful",
+                Email = user.Email,
+                Success = true,
+                UserId = user.Id.ToString()
+            };
         }
+        catch (System.Exception ex)
+        {
+            Console.Write(ex.Message);
+            return new LoginResponse { Success = false, Message = ex.Message };
+        }
+    }
+
+    public async Task<User?> GetCurrentUserAsync(HttpContext httpContext)
+    {
+        return await userManager.GetUserAsync(httpContext.User);
+    }
 }

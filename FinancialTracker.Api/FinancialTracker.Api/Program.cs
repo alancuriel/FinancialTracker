@@ -15,6 +15,7 @@ MongoDbConfiguration.ConfigureMongoDbServices(builder.Configuration, builder.Ser
 
 builder.Services
     .AddScoped<AuthenicationService>()
+    .AddScoped<CopilotOnboardService>()
     .AddSingleton<FinancialDataAccess>();
 
 // Add services to the container.

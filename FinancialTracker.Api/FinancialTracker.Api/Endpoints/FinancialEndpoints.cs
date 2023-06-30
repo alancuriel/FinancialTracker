@@ -1,52 +1,40 @@
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using CsvHelper;
 using CsvHelper.Configuration;
 using FinancialTracker.Api.Mappers.CsvMappers;
 using FinancialTracker.Api.Model;
+using Microsoft.AspNetCore.Identity;
 
 namespace FinancialTracker.Api.Endpoints;
 
-public static class FinancialEndpoints 
+public static class FinancialEndpoints
 {
     public static void MapAppEndpoints(this WebApplication app)
     {
-        app.MapPost("/copilotupload", async (IFormFile file, FinancialDataAccess dA) =>
+        app.MapPost("/copilotupload", async (IFormFile file, 
+            CopilotOnboardService onboardService , 
+            HttpContext httpContext,
+            AuthenicationService authenicationService) =>
         {
-            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
+            User? user = await authenicationService.GetCurrentUserAsync(httpContext);
+            if (user is null)
             {
-                NewLine = Environment.NewLine,
-                PrepareHeaderForMatch = (args) => args.Header.ToLower(),
-            };
+                return Results.Unauthorized();
+            }
 
-            using StreamReader reader = new(file.OpenReadStream());
-            using CsvReader csv = new(reader, csvConfig);
-
-            csv.Context.RegisterClassMap<CopilotTransactionMap>();
-
-            var records = csv.GetRecordsAsync<CopilotTransaction>();
-            // await foreach (var record in records)
-            // {
-            //     if (record.Category == "Car")
-            //     {
-            //         Console.WriteLine($"Transaction Found ${record.Name} - ${record.Amount}");
-            //     }
-            // }
-
-            var transactions = records.ToBlockingEnumerable()
-                .Where(r => r.Category == "Car")
-                .Select(r => new Transaction
-                    {
-                        Name = r.Name,
-                        Amount = r.Amount,
-                        Date = DateTime.Parse(r.Date),
-                        Excluded = r.Excluded,
-                        Note = r.Note,
-                        Status = r.Status
-                    })
-                .ToList();
-            return await dA.CreateTransactions(transactions);
+            try
+            {
+                await onboardService.OnboardFromCopilotCsv(user, file);
+            }
+            catch (System.Exception)
+            {
+                throw new Exception("Error uploading your csv");
+            }
+            
+            return Results.Content("Transactions and accounts added");
         })
-        .WithName("PostCopilotTransactions");
-        // .RequireAuthorization("user_basic");
+        .WithName("PostCopilotTransactions")
+        .RequireAuthorization("user_basic");
     }
 }

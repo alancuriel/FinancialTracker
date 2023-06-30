@@ -9,5 +9,5 @@ public class User : MongoIdentityUser<Guid>
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public List<string> Accounts { get; set; } = new List<string>();
+    public List<Guid> Accounts { get; set; } = new List<Guid>();
 }
