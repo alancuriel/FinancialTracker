@@ -46,7 +46,7 @@ public class FinancialDataAccess
         return transactions.Select(t => t.Id.ToString()).ToList();
     }
 
-    public async Task CreateAccountsAsync(List<KeyValuePair<int, Account>> accounts)
+    public async Task CreateAccountsAsync(List<KeyValuePair<string, Account>> accounts)
     {
         IMongoCollection<Account> accountsCollection =
             ConnectToMongo<Account>(AccountsCollection);
@@ -64,6 +64,22 @@ public class FinancialDataAccess
         return account.Id;
     }
 
+    public async Task<List<Transaction>> GetTransactionsAfterDateAsync(Guid userId, DateTime date)
+    {
+        IMongoCollection<Transaction> transactionCollection =
+            ConnectToMongo<Transaction>(TransactionsCollection);
+
+        FilterDefinitionBuilder<Transaction> builder = 
+            Builders<Transaction>.Filter;
+
+        FilterDefinition<Transaction> filter = 
+            builder.Eq(t => t.UserId, userId) & builder.Gt(t => t.Date, date);
+
+        var results = await transactionCollection.FindAsync(filter);
+
+        return results.ToList();
+    }
+
     private IMongoCollection<T> ConnectToMongo<T>(in string collection)
     {
         MongoClient client = new(configuration["MONGO_CONN_NAME"]);
@@ -71,5 +87,4 @@ public class FinancialDataAccess
         return db.GetCollection<T>(collection);
     }
 
-    
 }

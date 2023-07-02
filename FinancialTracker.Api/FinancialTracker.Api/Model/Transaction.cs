@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace FinancialTracker.Api;
 
@@ -7,6 +6,8 @@ public class Transaction
 {
     [BsonId]
     public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid UserId { get; set; } = Guid.Empty;
+    public Guid AccountId { get; set; } = Guid.Empty;
     public string Name { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public DateTime Date { get; set; }

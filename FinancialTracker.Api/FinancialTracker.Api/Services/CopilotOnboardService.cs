@@ -31,7 +31,7 @@ public class CopilotOnboardService
         csv.Context.RegisterClassMap<CopilotTransactionMap>();
 
         List<Transaction> transactions = new();
-        Dictionary<int, Account> accountMasks = new();
+        Dictionary<string, Account> accountMasks = new();
 
         await foreach (var record in csv.GetRecordsAsync<CopilotTransaction>())
         {
@@ -42,12 +42,14 @@ public class CopilotOnboardService
                 Date = DateTime.Parse(record.Date),
                 Excluded = record.Excluded,
                 Note = record.Note,
-                Status = record.Status
+                Status = record.Status,
+                UserId = user.Id
             };
 
-            if (accountMasks.TryGetValue(record.AccountMask, out Account? account))
+            if (accountMasks.TryGetValue(record.Account, out Account? account))
             {
                 account.Transactions.Add(newTransaction.Id);
+                newTransaction.AccountId = account.Id;
             }
             else
             {
@@ -57,10 +59,15 @@ public class CopilotOnboardService
                     Balance = 0,
                 };
 
+                // Add transaction to account and vice versa
                 newAcc.Transactions.Add(newTransaction.Id);
-                user.Accounts.Add(newTransaction.Id);
+                newTransaction.AccountId = newAcc.Id;
 
-                accountMasks.Add(record.AccountMask, newAcc);
+                // Add account to user
+                user.Accounts.Add(newAcc.Id);
+
+                // Add account to accounts
+                accountMasks.Add(record.Account, newAcc);
             }
 
             transactions.Add(newTransaction);

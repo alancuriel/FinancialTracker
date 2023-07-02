@@ -16,7 +16,8 @@ MongoDbConfiguration.ConfigureMongoDbServices(builder.Configuration, builder.Ser
 builder.Services
     .AddScoped<AuthenicationService>()
     .AddScoped<CopilotOnboardService>()
-    .AddSingleton<FinancialDataAccess>();
+    .AddSingleton<FinancialDataAccess>()
+    .AddSingleton<FinancialDataService>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

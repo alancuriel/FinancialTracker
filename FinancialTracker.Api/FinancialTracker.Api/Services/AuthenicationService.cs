@@ -20,7 +20,7 @@ public class AuthenicationService
         this.config = config;
     }
 
-    public async Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest)
+    public async Task<GenericResponse> RegisterAsync(RegisterRequest registerRequest)
     {
         try
         {
@@ -28,7 +28,7 @@ public class AuthenicationService
 
             if (existingUser is not null)
             {
-                return new RegisterResponse { Success = false, Message = "Email is already in use" };
+                return new GenericResponse { Success = false, Message = "Email is already in use" };
             }
 
             User newUser = new()
@@ -45,7 +45,7 @@ public class AuthenicationService
 
             if (!createdUserResult.Succeeded)
             {
-                return new RegisterResponse
+                return new GenericResponse
                 {
                     Success = false,
                     Message = $"Create User failed {createdUserResult?.Errors?.First()?.Description}"
@@ -58,14 +58,14 @@ public class AuthenicationService
             if (!addUserToRoleResult.Succeeded)
             {
                 string? error = addUserToRoleResult?.Errors?.First()?.Description;
-                return new RegisterResponse
+                return new GenericResponse
                 {
                     Success = false,
                     Message = $"Created User, but could not add user to role {error}"
                 };
             }
 
-            return new RegisterResponse
+            return new GenericResponse
             {
                 Success = true,
                 Message = "User registerd successfuly!"
@@ -74,7 +74,7 @@ public class AuthenicationService
         catch (System.Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return new RegisterResponse { Success = false, Message = ex.Message };
+            return new GenericResponse { Success = false, Message = ex.Message };
         }
     }
 

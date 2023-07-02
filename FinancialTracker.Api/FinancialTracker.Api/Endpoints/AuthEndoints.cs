@@ -18,7 +18,7 @@ public static class AuthEndoints
         app.MapPost("api/v1/authenticate/register", 
             async (RegisterRequest registerRequest, AuthenicationService authService) =>
         {
-            RegisterResponse result = await authService.RegisterAsync(registerRequest);
+            GenericResponse result = await authService.RegisterAsync(registerRequest);
 
             return result.Success ? Results.Ok(result) : Results.BadRequest(result.Message);
         });
