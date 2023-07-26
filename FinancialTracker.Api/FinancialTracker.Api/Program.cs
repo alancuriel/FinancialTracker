@@ -17,7 +17,8 @@ builder.Services
     .AddScoped<AuthenicationService>()
     .AddScoped<CopilotOnboardService>()
     .AddSingleton<FinancialDataAccess>()
-    .AddSingleton<FinancialDataService>();
+    .AddSingleton<FinancialDataService>()
+    .AddCors();
 
 builder.Logging.AddConsole();
 
@@ -42,5 +43,6 @@ app.UseAuthorization();
 app.MapAuthApis();
 app.MapAppEndpoints();
 
+app.UseCors();
 
 app.Run();
