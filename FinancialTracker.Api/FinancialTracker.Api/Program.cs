@@ -17,7 +17,10 @@ builder.Services
     .AddScoped<AuthenicationService>()
     .AddScoped<CopilotOnboardService>()
     .AddSingleton<FinancialDataAccess>()
-    .AddSingleton<FinancialDataService>();
+    .AddSingleton<FinancialDataService>()
+    .AddCors();
+
+builder.Logging.AddConsole();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -32,7 +35,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -41,5 +43,6 @@ app.UseAuthorization();
 app.MapAuthApis();
 app.MapAppEndpoints();
 
+app.UseCors();
 
 app.Run();
