@@ -29,6 +29,7 @@ public static class MongoDbConfiguration
             },
             IdentityOptionsAction = (IdentityOptions options) =>
             {
+                // Password Requirments
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = true;

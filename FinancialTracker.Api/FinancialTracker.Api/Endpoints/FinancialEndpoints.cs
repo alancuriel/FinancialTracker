@@ -25,9 +25,11 @@ public static class FinancialEndpoints
             }
             catch (Exception ex)
             {
-                logger.LogError("Error uploading csv", ex);
-                throw new Exception("An error occured while uploading your csv file.");
+                const string errorMsg = "Error parsing csv";
+                logger.LogError(errorMsg, ex);
+                return Results.BadRequest(new GenericResponse{ Success = false, Message = errorMsg});
             }
+            
             return Results.Content("Transactions and accounts added");
         })
         .WithName("PostCopilotTransactions")

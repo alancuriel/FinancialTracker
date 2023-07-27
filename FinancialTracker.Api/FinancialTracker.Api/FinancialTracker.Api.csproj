@@ -25,7 +25,6 @@
     <None Remove="Mappers\CsvMappers\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\" />
     <Folder Include="Mappers\" />
     <Folder Include="Mappers\CsvMappers\" />
   </ItemGroup>
