@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 import getConfig from 'next/config';
-import Router from 'next/router';
+import Router from 'next/navigation';
 
 
 import { fetchWrapper } from '../helpers/fetch-wrapper';
@@ -21,24 +21,22 @@ export const userService = {
     delete: _delete
 };
 
-function login(username, password) {
+async function login(email, password) {
 
 
-    return fetchWrapper.post(`${baseUrl}/authenticate`, { username, password })
-        .then(user => {
-            // publish user to subscribers and store in local storage to stay logged in between page refreshes
-            userSubject.next(user);
-            localStorage.setItem('user', JSON.stringify(user));
-
-            return user;
-        });
+    const user = await fetchWrapper.post(`${baseUrl}/login`, { email, password });
+    // publish user to subscribers and store in local storage to stay logged in between page refreshes
+    console.log(user)
+    userSubject.next(user);
+    localStorage.setItem('user', JSON.stringify(user));
+    return user;
 }
 
 function logout() {
     // remove user from local storage, publish null to user subscribers and redirect to login page
     localStorage.removeItem('user');
     userSubject.next(null);
-    Router.push('/account/login');
+    
 }
 
 function register(user) {
@@ -53,20 +51,18 @@ function getById(id) {
     return fetchWrapper.get(`${baseUrl}/${id}`);
 }
 
-function update(id, params) {
-    return fetchWrapper.put(`${baseUrl}/${id}`, params)
-        .then(x => {
-            // update stored user if the logged in user updated their own record
-            if (id === userSubject.value.id) {
-                // update local storage
-                const user = { ...userSubject.value, ...params };
-                localStorage.setItem('user', JSON.stringify(user));
+async function update(id, params) {
+    const x = await fetchWrapper.put(`${baseUrl}/${id}`, params);
+    // update stored user if the logged in user updated their own record
+    if (id === userSubject.value.id) {
+        // update local storage
+        const user = { ...userSubject.value, ...params };
+        localStorage.setItem('user', JSON.stringify(user));
 
-                // publish updated user to subscribers
-                userSubject.next(user);
-            }
-            return x;
-        });
+        // publish updated user to subscribers
+        userSubject.next(user);
+    }
+    return x;
 }
 
 // prefixed with underscored because delete is a reserved word in javascript

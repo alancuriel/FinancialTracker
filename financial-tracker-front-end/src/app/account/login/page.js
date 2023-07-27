@@ -30,7 +30,7 @@ function Login() {
 
     // form validation rules 
     const validationSchema = Yup.object().shape({
-        username: Yup.string().required('Username is required'),
+        email: Yup.string().required('Email is required'),
         password: Yup.string().required('Password is required')
     });
     const formOptions = { resolver: yupResolver(validationSchema) };
@@ -39,12 +39,12 @@ function Login() {
     const { register, handleSubmit, formState } = useForm(formOptions);
     const { errors } = formState;
 
-    function onSubmit({ username, password }) {
-        return userService.login(username, password)
+    function onSubmit({ email, password }) {
+        return userService.login(email, password)
             .then(() => {
                 // get return url from query parameters or default to '/'
-                const returnUrl = router.query.returnUrl || '/';
-                router.push(returnUrl);
+                //const returnUrl = router.query.returnUrl || '/';
+                router.push("/");
             })
             .catch(alertService.error);
     }
@@ -126,8 +126,8 @@ function Login() {
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="form-group flex items-center my-4 justify-between">
                             
-                            <input name="username" placeholder="Username" type="text" {...register('username')} class="rounded-full px-4 py-3 w-full" className={`rounded-full px-4 py-3 w-full ${errors.username ? 'is-invalid' : ''}`} />
-                            <div className="invalid-feedback">{errors.username?.message}</div>
+                            <input name="email" placeholder="Email" type="email" {...register('email')} class="rounded-full px-4 py-3 w-full" className={`rounded-full px-4 py-3 w-full ${errors.email ? 'is-invalid' : ''}`} />
+                            <div className="invalid-feedback">{errors.email?.message}</div>
                         </div>
                         <div className="form-group flex items-center my-4 justify-between">
                             

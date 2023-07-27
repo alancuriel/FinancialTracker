@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
+    
     reactStrictMode: true,
     serverRuntimeConfig: {
         secret: 'THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING'
@@ -10,6 +11,6 @@ module.exports = {
             : 'http://localhost:3000/api' // production api
     },
     env: {
-        NEXT_PUBLIC_PUBLICAPI: 'http://localhost:7107'
+        NEXT_PUBLIC_PUBLICAPI: 'https://localhost:7107'
     }
 }

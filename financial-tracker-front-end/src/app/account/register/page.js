@@ -52,7 +52,7 @@ function Register() {
         return userService.register(user)
             .then(() => {
                 //alertService.success('Registration successful', { keepAfterRouteChange: true });
-                router.push('login');
+                router.push('/account/login');
             })
             .catch(console.log("pop"))
             //.catch(alertService.error);

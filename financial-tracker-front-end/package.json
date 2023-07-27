@@ -2,6 +2,7 @@
   "name": "financial-tracker-front-end",
   "version": "0.1.0",
   "private": true,
+  "proxy": "https://localhost:7107",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

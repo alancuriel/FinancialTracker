@@ -10,15 +10,38 @@ builder.Services
         .AddAuthorizationBuilder()
         .AddPolicy(AuthorizationRoles.USER_POLICY, policy =>
                 policy.RequireRole(AuthorizationRoles.USER_ROLE));
-                    
+
 MongoDbConfiguration.ConfigureMongoDbServices(builder.Configuration, builder.Services);
+
+builder.Services.AddCors(options =>
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        options.AddPolicy("corsPolicy", builder =>
+        {
+            builder.WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .AllowAnyMethod();
+        });
+    }
+    else
+    {
+        options.AddPolicy("corsPolicy", builder =>
+        {
+            builder.AllowAnyHeader()
+                .WithMethods("POST", "GET")
+                .WithOrigins("https://domain1.com", "https://domain2.com");
+        });
+    }
+});
+
 
 builder.Services
     .AddScoped<AuthenicationService>()
     .AddScoped<CopilotOnboardService>()
     .AddSingleton<FinancialDataAccess>()
-    .AddSingleton<FinancialDataService>()
-    .AddCors();
+    .AddSingleton<FinancialDataService>();
 
 builder.Logging.AddConsole();
 
@@ -37,12 +60,14 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 
+app.UseCors("corsPolicy");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthApis();
 app.MapAppEndpoints();
 
-app.UseCors();
+
 
 app.Run();

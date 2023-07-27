@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 
 import { Link } from '../components/Link';
+import { usePathname } from 'next/navigation';
 
 export { NavLink };
 
@@ -15,12 +16,13 @@ NavLink.defaultProps = {
 };
 
 function NavLink({ children, href, exact, ...props }) {
-    const { pathname } = useRouter();
-    const isActive = exact ? pathname === href : pathname.startsWith(href);
+    //const { pathname } = usePathname();
+    //console.log(pathname)
+    //const isActive = exact ? pathname === href : pathname.startsWith(href);
     
-    if (isActive) {
-        props.className += ' active';
-    }
+    //if (isActive) {
+        //props.className += ' active';
+    //}
 
     return <Link href={href} {...props}>{children}</Link>;
 }

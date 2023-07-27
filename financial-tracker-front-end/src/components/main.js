@@ -17,6 +17,7 @@ function Main({Component, pageProps}){
 
  
   useEffect(() => {
+    console.log("hook")
     if(initial === true){
     //run initial authentication check on load
     
@@ -37,7 +38,7 @@ function Main({Component, pageProps}){
         setInitial(false)
     }
 
-  }}, [pathname])
+  }}, [])
 
 
 function authCheck(url) {
@@ -58,14 +59,15 @@ return (
       <Head>
           <title>Financial Tracker</title>
           
-          {/* eslint-disable-next-line @next/next/no-css-tags */}
+          
           
       </Head>
 
       <div className={`app-container ${user ? 'bg-light' : ''}`}>
           <Navigation />
-          {authorized &&
-              <Component {...pageProps} />
+          {authorized 
+          //&&
+            //  <Component {...pageProps} />
           }
       </div>
   </>
