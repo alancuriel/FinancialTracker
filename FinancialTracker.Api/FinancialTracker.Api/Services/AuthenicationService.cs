@@ -68,10 +68,10 @@ public class AuthenicationService
             return new GenericResponse
             {
                 Success = true,
-                Message = "User registerd successfuly!"
+                Message = "User registered successfuly!"
             };
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return new GenericResponse { Success = false, Message = ex.Message };

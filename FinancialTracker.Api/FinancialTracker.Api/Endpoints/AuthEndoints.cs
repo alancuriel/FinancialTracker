@@ -20,7 +20,7 @@ public static class AuthEndoints
         {
             GenericResponse result = await authService.RegisterAsync(registerRequest);
 
-            return result.Success ? Results.Ok(result) : Results.BadRequest(result.Message);
+            return result.Success ? Results.Ok(result) : Results.BadRequest(result);
         });
 
 
@@ -29,7 +29,7 @@ public static class AuthEndoints
         {
             LoginResponse result = await authService.LoginAsync(request);
 
-            return result.Success ? Results.Ok(result) : Results.BadRequest(result.Message);
+            return result.Success ? Results.Ok(result) : Results.BadRequest(result);
         });
 
 

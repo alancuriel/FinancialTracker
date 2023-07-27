@@ -7,6 +7,7 @@ public class FinancialDataAccess
     public const string DatabaseName = "financialTrackerDB";
     private const string AccountsCollection = "accounts";
     private const string TransactionsCollection = "transactions";
+    private const string CategoriesCollection = "categories";
 
     private readonly IConfiguration configuration;
 
@@ -35,7 +36,7 @@ public class FinancialDataAccess
         return results.ToList();
     }
 
-    public async Task<List<string>> CreateTransactions(List<Transaction> transactions)
+    public async Task<List<string>> CreateTransactions(IEnumerable<Transaction> transactions)
     {
         IMongoCollection<Transaction> transactionCollection =
             ConnectToMongo<Transaction>(TransactionsCollection);
@@ -46,14 +47,23 @@ public class FinancialDataAccess
         return transactions.Select(t => t.Id.ToString()).ToList();
     }
 
-    public async Task CreateAccountsAsync(List<KeyValuePair<string, Account>> accounts)
+    public async Task CreateAccountsAsync(IEnumerable<Account> accounts)
     {
         IMongoCollection<Account> accountsCollection =
             ConnectToMongo<Account>(AccountsCollection);
 
-        var accountsToWrite = accounts.Select(acc => new InsertOneModel<Account>(acc.Value));
+        var accountsToWrite = accounts.Select(acc => new InsertOneModel<Account>(acc));
         var results = await accountsCollection.BulkWriteAsync(accountsToWrite);
 
+    }
+
+    public async Task CreateCategoriesAsync(IEnumerable<Category> categories)
+    {
+        IMongoCollection<Category> categoriesCollection =
+            ConnectToMongo<Category>(CategoriesCollection);
+
+        var accountsToWrite = categories.Select(cat => new InsertOneModel<Category>(cat));
+        var results = await categoriesCollection.BulkWriteAsync(accountsToWrite);
     }
 
     public async Task<Guid> CreateAccount(Account account)
@@ -69,10 +79,10 @@ public class FinancialDataAccess
         IMongoCollection<Transaction> transactionCollection =
             ConnectToMongo<Transaction>(TransactionsCollection);
 
-        FilterDefinitionBuilder<Transaction> builder = 
+        FilterDefinitionBuilder<Transaction> builder =
             Builders<Transaction>.Filter;
 
-        FilterDefinition<Transaction> filter = 
+        FilterDefinition<Transaction> filter =
             builder.Eq(t => t.UserId, userId) & builder.Gt(t => t.Date, date);
 
         var results = await transactionCollection.FindAsync(filter);
