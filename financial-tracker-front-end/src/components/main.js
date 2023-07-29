@@ -1,62 +1,76 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter, usePathname } from 'next/navigation'
 
-let pizzas = [
-  {
-    id: 1,
-    name: "Cheese pizza",
-    description: "very cheesy",
-  },
-  {
-    id: 2,
-    name: "Al Tono pizza",
-    description: "lots of tuna",
-  },
-];
+import { Navigation } from '../components/navigation';
 
-const Pizza = ({ pizza }) => {
-  const [data, setData] = useState(pizza);
-  const [dirty, setDirty] = useState(false);
+import  Head  from 'next/head'
+import { userService } from '../services/user.service';
 
-  function update(value, fieldName, obj) {
-    setData({ ...obj, [fieldName]: value });
-    setDirty(true);
+
+function Main({Component, pageProps}){
+  const router = useRouter();
+  const pathname = usePathname();
+  const [user, setUser] = useState(null);
+  const[authorized, setAuthorized] = useState(false);
+  const [initial, setInitial] = useState(true)
+
+ 
+  useEffect(() => {
+    console.log("hook")
+    if(initial === true){
+    //run initial authentication check on load
+    
+    // on route change start - hide content by setting authorization to false
+    const hideContent = () => setAuthorized(false);
+    hideContent();
+
+    authCheck(pathname);
+    
+    
+    
+
+    // on route change complete - run auth check 
+    
+
+    // unsubscribe from events in useEffect return function
+    return () => {
+        setInitial(false)
+    }
+
+  }}, [])
+
+
+function authCheck(url) {
+  // redirect to login page if accessing a private page and not logged in 
+  setUser(userService.userValue);
+  const publicPaths = ['/account/login', '/account/register'];
+  const path = url.split('?')[0];
+  if (!userService.userValue && !publicPaths.includes(path)) {
+      setAuthorized(false);
+      router.push('/account/login');
+  } else {
+      setAuthorized(true);
   }
+}
 
-  function onSave() {
-    setDirty(false);
-    // make rest call
-  }
+return (
+  <>
+      <Head>
+          <title>Financial Tracker</title>
+          
+          
+          
+      </Head>
 
-  return (
-    <React.Fragment>
-      <div className="flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-        <h3>
-          <input
-            onChange={(evt) => update(evt.target.value, "name", data)}
-            value={data.name}
-          />
-        </h3>
-        <div>
-          <input
-            onChange={(evt) => update(evt.target.value, "description", data)}
-            value={data.description}
-          />
-        </div>
-        {dirty ? (
-          <div>
-            <button onClick={() => onSave()}>Save</button>
-          </div>
-        ) : null}
+      <div className={`app-container ${user ? 'bg-light' : ''}`}>
+          <Navigation />
+          {authorized 
+          //&&
+            //  <Component {...pageProps} />
+          }
       </div>
-    </React.Fragment>
-  );
-};
-
-const Main = () => {
-  const data = pizzas.map((pizza) => <Pizza key={pizza.id} pizza={pizza} />);
-
-  return <React.Fragment>{data}</React.Fragment>;
-};
-
+  </>
+);
+}
 export default Main;
