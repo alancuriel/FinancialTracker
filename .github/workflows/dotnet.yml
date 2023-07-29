@@ -16,7 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: cd FinancialTracker.Api/FinancialTracker.Api
+    - name: navigate
+      run: cd FinancialTracker.Api/FinancialTracker.Api
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
