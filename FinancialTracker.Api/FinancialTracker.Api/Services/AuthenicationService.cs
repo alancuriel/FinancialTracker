@@ -11,12 +11,15 @@ namespace FinancialTracker.Api;
 public class AuthenicationService
 {
     private readonly UserManager<User> userManager;
+    private readonly SignInManager<User> signInManager;
     private readonly IConfiguration config;
 
     public AuthenicationService(UserManager<User> userManager,
+                                SignInManager<User> signInManager,
                                 IConfiguration config)
     {
         this.userManager = userManager;
+        this.signInManager = signInManager;
         this.config = config;
     }
 
@@ -68,10 +71,10 @@ public class AuthenicationService
             return new GenericResponse
             {
                 Success = true,
-                Message = "User registerd successfuly!"
+                Message = "User registered successfuly!"
             };
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             return new GenericResponse { Success = false, Message = ex.Message };
@@ -83,7 +86,7 @@ public class AuthenicationService
         try
         {
             User? user = await userManager.FindByEmailAsync(request.Email);
-            if (user is null || user.Email is null)
+            if (user is null || user.Email is null || !await CheckPassword(request, user))
             {
                 return new LoginResponse { Message = "Invalid email/password", Success = false };
             }
@@ -132,6 +135,11 @@ public class AuthenicationService
             Console.Write(ex.Message);
             return new LoginResponse { Success = false, Message = ex.Message };
         }
+    }
+
+    private async Task<bool> CheckPassword(LoginRequest request, User user)
+    {
+        return await userManager.CheckPasswordAsync(user, request.Password);
     }
 
     public async Task<User?> GetCurrentUserAsync(HttpContext httpContext)
