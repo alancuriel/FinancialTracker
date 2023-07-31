@@ -131,7 +131,7 @@ function Register() {
     </div>
                         <div class="px-6 py-4 flex flex-col items-center">
                             <div class="font-bold text-white  text-xl align-middle ">Register</div>
-                            <div className="flex-col">
+                            <div className="flex-col text-black">
                     <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-group flex items-center my-4 justify-between">
                             

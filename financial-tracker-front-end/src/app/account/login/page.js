@@ -122,16 +122,16 @@ function Login() {
     </div>
                         <div class="shadow-lg px-6 py-4 flex flex-col items-center">
                             <div class="font-bold text-xl align-middle text-white">Login</div>
-                            <div className="flex-col">
+                            <div class="flex-col">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="form-group flex items-center my-4 justify-between">
                             
-                            <input name="email" placeholder="Email" type="email" {...register('email')} class="rounded-full px-4 py-3 w-full" className={`rounded-full px-4 py-3 w-full ${errors.email ? 'is-invalid' : ''}`} />
+                            <input name="email" placeholder="Email" type="email" {...register('email')} class="rounded-full px-4 py-3 w-full text-black" className={`rounded-full px-4 py-3 w-full text-black ${errors.email ? 'is-invalid' : ''}`} />
                             <div className="invalid-feedback">{errors.email?.message}</div>
                         </div>
                         <div className="form-group flex items-center my-4 justify-between">
                             
-                            <input placeholder="Password" name="password" class="rounded-full px-4 py-3 w-full" type="password" {...register('password')} className={`rounded-full px-4 py-3 w-full ${errors.password ? 'is-invalid' : ''}`} />
+                            <input placeholder="Password" name="password" class="rounded-full px-4 py-3 w-full text-black" type="password" {...register('password')} className={`rounded-full px-4 py-3 w-full text-black ${errors.password ? 'is-invalid' : ''}`} />
                             <div className="invalid-feedback">{errors.password?.message}</div>
                         </div>
                         <div class="flex flex-row items-center align-middle justify-around my-4">

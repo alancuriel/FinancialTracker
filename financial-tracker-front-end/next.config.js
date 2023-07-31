@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
+
+    compiler: {     styledComponents: true   },
+    experimental: {
+        appDir: true
+      },
     
     reactStrictMode: true,
     serverRuntimeConfig: {

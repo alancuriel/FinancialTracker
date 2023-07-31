@@ -6,9 +6,10 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    
-    
-    colors: {
+
+    extend: {
+
+      colors: {
         gunmetaldark: "#202C39",
         gunmetallight: "#283845",
         sage: "#B8B08D",
@@ -17,8 +18,6 @@ module.exports = {
         gunmetallighter:"#385368",
         white: "#FFF"
     },
-
-    extend: {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
