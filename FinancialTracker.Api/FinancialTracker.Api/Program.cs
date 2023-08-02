@@ -1,6 +1,7 @@
 ﻿using FinancialTracker.Api;
 using FinancialTracker.Api.Configuration;
 using FinancialTracker.Api.Endpoints;
+using FinancialTracker.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +41,7 @@ builder.Services.AddCors(options =>
 builder.Services
     .AddScoped<AuthenicationService>()
     .AddScoped<CopilotOnboardService>()
-    .AddSingleton<FinancialDataAccess>()
+    .AddSingleton<IFinancialDataAccess, FinancialDataAccess>()
     .AddSingleton<FinancialDataService>();
 
 builder.Logging.AddConsole();

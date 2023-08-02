@@ -2,7 +2,7 @@
 
 namespace FinancialTracker.Api;
 
-public class FinancialDataAccess
+public class FinancialDataAccess : IFinancialDataAccess
 {
     public const string DatabaseName = "financialTrackerDB";
     private const string AccountsCollection = "accounts";
@@ -54,7 +54,6 @@ public class FinancialDataAccess
 
         var accountsToWrite = accounts.Select(acc => new InsertOneModel<Account>(acc));
         var results = await accountsCollection.BulkWriteAsync(accountsToWrite);
-
     }
 
     public async Task CreateCategoriesAsync(IEnumerable<Category> categories)

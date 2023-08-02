@@ -5,7 +5,7 @@ using FinancialTracker.Api.Mappers.CsvMappers;
 using FinancialTracker.Api.Model;
 using Microsoft.AspNetCore.Identity;
 
-namespace FinancialTracker.Api;
+namespace FinancialTracker.Api.Services;
 
 public class CopilotOnboardService
 {
@@ -14,10 +14,10 @@ public class CopilotOnboardService
         NewLine = Environment.NewLine,
         PrepareHeaderForMatch = (args) => args.Header.ToLower(),
     };
-    private readonly FinancialDataAccess dataAccess;
+    private readonly IFinancialDataAccess dataAccess;
     private readonly UserManager<User> userManager;
 
-    public CopilotOnboardService(FinancialDataAccess dataAccess, UserManager<User> userManager)
+    public CopilotOnboardService(IFinancialDataAccess dataAccess, UserManager<User> userManager)
     {
         this.dataAccess = dataAccess;
         this.userManager = userManager;

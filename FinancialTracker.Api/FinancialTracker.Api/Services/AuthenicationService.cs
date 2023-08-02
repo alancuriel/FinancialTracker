@@ -6,20 +6,16 @@ using FinancialTracker.Api.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FinancialTracker.Api;
+namespace FinancialTracker.Api.Services;
 
 public class AuthenicationService
 {
     private readonly UserManager<User> userManager;
-    private readonly SignInManager<User> signInManager;
     private readonly IConfiguration config;
 
-    public AuthenicationService(UserManager<User> userManager,
-                                SignInManager<User> signInManager,
-                                IConfiguration config)
+    public AuthenicationService(UserManager<User> userManager, IConfiguration config)
     {
         this.userManager = userManager;
-        this.signInManager = signInManager;
         this.config = config;
     }
 
@@ -48,10 +44,11 @@ public class AuthenicationService
 
             if (!createdUserResult.Succeeded)
             {
+                string? error = createdUserResult?.Errors?.FirstOrDefault()?.Description ?? "";
                 return new GenericResponse
                 {
                     Success = false,
-                    Message = $"Create User failed {createdUserResult?.Errors?.First()?.Description}"
+                    Message = $"Create User failed {error}"
                 };
             }
 
@@ -60,7 +57,7 @@ public class AuthenicationService
 
             if (!addUserToRoleResult.Succeeded)
             {
-                string? error = addUserToRoleResult?.Errors?.First()?.Description;
+                string? error = addUserToRoleResult?.Errors?.FirstOrDefault()?.Description ?? "";
                 return new GenericResponse
                 {
                     Success = false,

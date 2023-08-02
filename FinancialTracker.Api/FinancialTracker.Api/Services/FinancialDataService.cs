@@ -1,6 +1,6 @@
 ﻿using FinancialTracker.Api.Model;
 
-namespace FinancialTracker.Api;
+namespace FinancialTracker.Api.Services;
 
 public class FinancialDataService
 {

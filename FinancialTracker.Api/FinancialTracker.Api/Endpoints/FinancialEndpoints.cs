@@ -1,5 +1,6 @@
 using FinancialTracker.Api.Dtos;
 using FinancialTracker.Api.Model;
+using FinancialTracker.Api.Services;
 
 namespace FinancialTracker.Api.Endpoints;
 
