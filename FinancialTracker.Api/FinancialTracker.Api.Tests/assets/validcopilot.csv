@@ -1,0 +1,8 @@
+"date","name","amount","status","category","parent category","excluded","type","account","account mask","note","recurring"
+"2023-07-22","Trader Joe's",14.46,"posted","Groceries","Food & Drink",false,"regular","Discover it Card","1235",,""
+"2023-07-19","Cafe Market Wa Apple Pay",42.48,"posted","Restaurants","Food & Drink",false,"regular","Discover it Card","1235",,""
+"2023-07-18","Barbershop Apple Pay",67.5,"posted","Personal Care",,false,"regular","Discover it Card","1235",,""
+"2023-07-17","Trader Joe's",42.45,"posted","Groceries","Food & Drink",false,"regular","Discover it Card","1235",,""
+"2023-07-10","Costco",24,"posted","Groceries","Food & Drink",false,"regular","venmo_account",,,""
+"2023-07-09","Amazon",27.5,"posted","Shops","Shopping",false,"regular","Amazon Prime Rewards Visa Signature Card","9943",,""
+"2023-07-08","Uber Eats",35.64,"posted","Restaurants","Food & Drink",false,"regular","SavorOne","1082",,""
