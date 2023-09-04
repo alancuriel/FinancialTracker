@@ -4,9 +4,9 @@ namespace FinancialTracker.Api.Services;
 
 public class FinancialDataService
 {
-    private readonly FinancialDataAccess dataAccess;
+    private readonly IFinancialDataAccess dataAccess;
 
-    public FinancialDataService(FinancialDataAccess dataAccess)
+    public FinancialDataService(IFinancialDataAccess dataAccess)
     {
         this.dataAccess = dataAccess;
     }

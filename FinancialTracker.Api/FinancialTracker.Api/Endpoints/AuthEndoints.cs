@@ -9,30 +9,29 @@ public static class AuthEndoints
 {
     public static void MapAuthApis(this WebApplication app)
     {
-        app.MapPost("api/v1/createRole/{roleName}", async (RoleManager<Role> roleManager, string roleName) =>
-        {
-            var appRole = new Role { Name = roleName };
-            var createdRole = await roleManager.CreateAsync(appRole);
-            return Results.Ok(new { Message = "Role created successfuly" });
-        });
+        app.MapPost("api/v1/authenticate/register", RegisterUser);
+        app.MapPost("api/v1/authenticate/login", LoginUser);
+        app.MapPost("api/v1/createRole/{roleName}", CreateRole);
+    }
 
-        app.MapPost("api/v1/authenticate/register", 
-            async (RegisterRequest registerRequest, AuthenicationService authService) =>
-        {
-            GenericResponse result = await authService.RegisterAsync(registerRequest);
+    public static async Task<IResult> CreateRole(RoleManager<Role> roleManager, string roleName)
+    {
+        var appRole = new Role { Name = roleName };
+        var createdRole = await roleManager.CreateAsync(appRole);
+        return Results.Ok(new { Message = "Role created successfuly" });
+    }
 
-            return result.Success ? Results.Ok(result) : Results.BadRequest(result);
-        });
+    public static async Task<IResult> RegisterUser(RegisterRequest request, IAuthenicationService authService)
+    {
+        GenericResponse result = await authService.RegisterAsync(request);
 
+        return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+    }
 
-        app.MapPost("api/v1/authenticate/login", 
-            async (LoginRequest request, AuthenicationService authService) =>
-        {
-            LoginResponse result = await authService.LoginAsync(request);
+    public async static Task<IResult> LoginUser(LoginRequest request, IAuthenicationService authService)
+    {
+        LoginResponse result = await authService.LoginAsync(request);
 
-            return result.Success ? Results.Ok(result) : Results.BadRequest(result);
-        });
-
-
+        return result.Success ? Results.Ok(result) : Results.BadRequest(result);
     }
 }
