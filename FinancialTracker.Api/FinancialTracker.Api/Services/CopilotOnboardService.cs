@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FinancialTracker.Api.Services;
 
-public class CopilotOnboardService
+public class CopilotOnboardService : ICopilotOnboardService
 {
     private readonly CsvConfiguration csvConfiguration = new(CultureInfo.InvariantCulture)
     {

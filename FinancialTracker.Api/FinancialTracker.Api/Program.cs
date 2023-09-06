@@ -39,8 +39,8 @@ builder.Services.AddCors(options =>
 
 
 builder.Services
-    .AddScoped<AuthenicationService>()
-    .AddScoped<CopilotOnboardService>()
+    .AddScoped<IAuthenicationService, AuthenicationService>()
+    .AddScoped<ICopilotOnboardService, CopilotOnboardService>()
     .AddSingleton<IFinancialDataAccess, FinancialDataAccess>()
     .AddSingleton<FinancialDataService>();
 

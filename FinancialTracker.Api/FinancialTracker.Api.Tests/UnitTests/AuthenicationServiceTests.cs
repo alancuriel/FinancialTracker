@@ -12,13 +12,13 @@ public class AuthenicationServiceTests
     [Fact]
     public async Task RegisterEmailInUseFailsTest()
     {
-        Mock<UserManager<User>> userManagerMock = MockHelpers.MockUserManager<User>();
-        Mock<IConfiguration> configurationMock = new();
-        AuthenicationService authService = new(userManagerMock.Object, configurationMock.Object);
+        UserManager<User> userManagerMock = MockHelpers.MockUserManager<User>();
+        IConfiguration configurationMock = Substitute.For<IConfiguration>();
+        AuthenicationService authService = new(userManagerMock, configurationMock);
 
         userManagerMock
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(new User());
+            .FindByEmailAsync(Arg.Any<String>())
+            .Returns(Task.FromResult<User?>(new User()));
 
         GenericResponse response = await authService.RegisterAsync(GetRegisterRequest());
 
@@ -29,17 +29,18 @@ public class AuthenicationServiceTests
     [Fact]
     public async Task RegisterUserCreationFailsTest()
     {
-        Mock<UserManager<User>> userManagerMock = MockHelpers.MockUserManager<User>();
-        Mock<IConfiguration> configurationMock = new();
-        AuthenicationService authService = new(userManagerMock.Object, configurationMock.Object);
+        UserManager<User> userManagerMock = MockHelpers.MockUserManager<User>();
+        IConfiguration configurationMock = Substitute.For<IConfiguration>();
+        AuthenicationService authService = new(userManagerMock, configurationMock);
+
+        
+        userManagerMock
+            .FindByEmailAsync(Arg.Any<string>())
+            .Returns(Task.FromResult<User?>(null));
 
         userManagerMock
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(null as User);
-
-        userManagerMock
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Failed());
+            .CreateAsync(Arg.Any<User>(), Arg.Any<string>())
+            .Returns(Task.FromResult<IdentityResult>(IdentityResult.Failed()));
 
 
         GenericResponse response = await authService.RegisterAsync(GetRegisterRequest());
@@ -51,21 +52,22 @@ public class AuthenicationServiceTests
     [Fact]
     public async Task RegisterAddRoleToUserFailsTest()
     {
-        Mock<UserManager<User>> userManagerMock = MockHelpers.MockUserManager<User>();
-        Mock<IConfiguration> configurationMock = new();
-        AuthenicationService authService = new(userManagerMock.Object, configurationMock.Object);
+        UserManager<User> userManagerMock = MockHelpers.MockUserManager<User>();
+        IConfiguration configurationMock = Substitute.For<IConfiguration>();
+        AuthenicationService authService = new(userManagerMock, configurationMock);
 
-        userManagerMock
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(null as User);
-
-        userManagerMock
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Success);
         
         userManagerMock
-            .Setup(x => x.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Failed());
+            .FindByEmailAsync(Arg.Any<string>())
+            .Returns(Task.FromResult<User?>(null));
+
+        userManagerMock
+            .CreateAsync(Arg.Any<User>(), Arg.Any<string>())
+            .Returns(Task.FromResult<IdentityResult>(IdentityResult.Success));
+
+        userManagerMock
+            .AddToRoleAsync(Arg.Any<User>(), Arg.Any<string>())
+            .Returns(Task.FromResult<IdentityResult>(IdentityResult.Failed()));
 
 
         GenericResponse response = await authService.RegisterAsync(GetRegisterRequest());
@@ -77,21 +79,22 @@ public class AuthenicationServiceTests
     [Fact]
     public async Task RegisterSucceedsTest()
     {
-        Mock<UserManager<User>> userManagerMock = MockHelpers.MockUserManager<User>();
-        Mock<IConfiguration> configurationMock = new();
-        AuthenicationService authService = new(userManagerMock.Object, configurationMock.Object);
+        UserManager<User> userManagerMock = MockHelpers.MockUserManager<User>();
+        IConfiguration configurationMock = Substitute.For<IConfiguration>();
+        AuthenicationService authService = new(userManagerMock, configurationMock);
 
-        userManagerMock
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(null as User);
-
-        userManagerMock
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Success);
         
         userManagerMock
-            .Setup(x => x.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Success);
+            .FindByEmailAsync(Arg.Any<string>())
+            .Returns(Task.FromResult<User?>(null));
+
+        userManagerMock
+            .CreateAsync(Arg.Any<User>(), Arg.Any<string>())
+            .Returns(Task.FromResult<IdentityResult>(IdentityResult.Success));
+
+        userManagerMock
+            .AddToRoleAsync(Arg.Any<User>(), Arg.Any<string>())
+            .Returns(Task.FromResult<IdentityResult>(IdentityResult.Success));
 
 
         GenericResponse response = await authService.RegisterAsync(GetRegisterRequest());
@@ -103,22 +106,22 @@ public class AuthenicationServiceTests
     [Fact]
     public async Task RegisterExceptionThrownFails()
     {
-        Mock<UserManager<User>> userManagerMock = MockHelpers.MockUserManager<User>();
-        Mock<IConfiguration> configurationMock = new();
-        AuthenicationService authService = new(userManagerMock.Object, configurationMock.Object);
-        Exception exception = new Exception("error");
+        UserManager<User> userManagerMock = MockHelpers.MockUserManager<User>();
+        IConfiguration configurationMock = Substitute.For<IConfiguration>();
+        AuthenicationService authService = new(userManagerMock, configurationMock);
+        Exception exception = new("error");
 
         userManagerMock
-            .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(null as User);
+            .FindByEmailAsync(Arg.Any<string>())
+            .Returns(Task.FromResult<User?>(null));
 
         userManagerMock
-            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Success);
-        
+            .CreateAsync(Arg.Any<User>(), Arg.Any<string>())
+            .Returns(Task.FromResult<IdentityResult>(IdentityResult.Success));
+
         userManagerMock
-            .Setup(x => x.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ThrowsAsync(exception);
+            .AddToRoleAsync(Arg.Any<User>(), Arg.Any<string>())
+            .TaskThrows(exception);
 
 
         GenericResponse response = await authService.RegisterAsync(GetRegisterRequest());

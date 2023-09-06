@@ -1,22 +1,30 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using NSubstitute;
+using NSubstitute.Core;
 
 namespace FinancialTracker.Api.Tests;
 
-public class MockHelpers
+public static class MockHelpers
 {
-    public static Mock<UserManager<TUser>> MockUserManager<TUser>() where TUser : class
+    public static UserManager<TUser> MockUserManager<TUser>() where TUser : class
     {
-        var store = new Mock<IUserStore<TUser>>();
-        var mgr = new Mock<UserManager<TUser>>(store.Object, null, null, null, null, null, null, null, null);
-        mgr.Object.UserValidators.Add(new UserValidator<TUser>());
-        mgr.Object.PasswordValidators.Add(new PasswordValidator<TUser>());
+        var store = Substitute.For<IUserStore<TUser>>();
+        var mgr = Substitute.For<UserManager<TUser>>(store, null, null, null, null, null, null, null, null);
+        mgr.UserValidators.Add(new UserValidator<TUser>());
+        mgr.PasswordValidators.Add(new PasswordValidator<TUser>());
         return mgr;
     }
 
-    public static Mock<FinancialDataAccess> MockFinancialDataAccess()
+    public static RoleManager<TRole> MockRoleManager<TRole>() where TRole : class
     {
-        Mock<IConfiguration> config = new();
-        return new Mock<FinancialDataAccess>(config.Object);
+        var store = Substitute.For<IRoleStore<TRole>>();
+        var mgr = Substitute.For<RoleManager<TRole>>(store, null, null, null, null);
+        mgr.RoleValidators.Add(new RoleValidator<TRole>());
+        return mgr;
+    }
+
+    public static ConfiguredCall TaskThrows<T>(this Task<T> task, Exception exception)
+    {
+        return task.Returns(Task.FromException<T>(exception));
     }
 }

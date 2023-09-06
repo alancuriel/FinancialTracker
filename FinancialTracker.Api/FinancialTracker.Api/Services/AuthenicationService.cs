@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace FinancialTracker.Api.Services;
 
-public class AuthenicationService
+public class AuthenicationService : IAuthenicationService
 {
     private readonly UserManager<User> userManager;
     private readonly IConfiguration config;
