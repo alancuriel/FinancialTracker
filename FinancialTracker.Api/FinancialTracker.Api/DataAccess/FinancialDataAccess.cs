@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver;
+﻿using System.Linq.Expressions;
+using FinancialTracker.Api.Model;
+using MongoDB.Driver;
 
 namespace FinancialTracker.Api;
 
@@ -21,6 +23,18 @@ public class FinancialDataAccess : IFinancialDataAccess
         var accountCollection = ConnectToMongo<Account>(AccountsCollection);
         var results = await accountCollection.FindAsync(c => c.Id == accountId);
         return results.First();
+    }
+
+    public async Task<IEnumerable<Account>> GetAccountsAsync(IEnumerable<Guid> guids)
+    {
+        IMongoCollection<Account> accountCollection = ConnectToMongo<Account>(AccountsCollection);
+
+        FilterDefinition<Account> filter = Builders<Account>
+            .Filter.In(a => a.Id, guids);
+
+        var results = await accountCollection.FindAsync(filter);
+
+        return results.ToEnumerable();
     }
 
     public async Task<List<Transaction>> GetTransactionsAsync(Account account)
@@ -96,4 +110,36 @@ public class FinancialDataAccess : IFinancialDataAccess
         return db.GetCollection<T>(collection);
     }
 
+    public async Task UpdateAccountPrimaryFieldsAsync(Guid id, 
+        string? name = null, AccountType? accountType = null)
+    {
+        if (name is null && accountType is null)
+        {
+            await Task.CompletedTask;
+            return;
+        }
+
+        IMongoCollection<Account> accountCollection =
+            ConnectToMongo<Account>(AccountsCollection);
+
+        var filter = Builders<Account>.Filter.Eq(a => a.Id, id);
+
+        List<UpdateDefinition<Account>> updates = new();
+
+        if (name is not null)
+        {
+            updates.Add(Builders<Account>.Update.Set(a => a.Name, name));
+        }
+
+        if (accountType is not null)
+        {
+            updates.Add(Builders<Account>.Update.Set(a => a.Type, accountType));
+        }
+
+
+
+        var result = await accountCollection
+            .UpdateOneAsync(filter, Builders<Account>.Update.Combine(updates
+            ));
+    }
 }

@@ -9,8 +9,12 @@ public static class AuthEndoints
 {
     public static void MapAuthApis(this WebApplication app)
     {
-        app.MapPost("api/v1/authenticate/register", RegisterUser);
-        app.MapPost("api/v1/authenticate/login", LoginUser);
+        app.MapPost("api/v1/authenticate/register", RegisterUser)
+            .Produces<GenericResponse>();
+
+        app.MapPost("api/v1/authenticate/login", LoginUser)
+            .Produces<LoginResponse>();
+            
         app.MapPost("api/v1/createRole/{roleName}", CreateRole);
     }
 

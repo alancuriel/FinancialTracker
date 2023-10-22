@@ -2,7 +2,7 @@
 
 namespace FinancialTracker.Api.Services;
 
-public class FinancialDataService
+public class FinancialDataService : IFinancialDataService
 {
     private readonly IFinancialDataAccess dataAccess;
 
@@ -15,5 +15,27 @@ public class FinancialDataService
     {
         DateTime date = DateTime.Now.AddDays(-days);
         return await dataAccess.GetTransactionsAfterDateAsync(user.Id, date);
+    }
+
+    public async Task<IEnumerable<Account>> GetAccountsAsync(User user)
+    {
+        var accounts = await dataAccess.GetAccountsAsync(user.Accounts);
+        return accounts.ToList();
+    }
+
+    public async Task UpdateAccountDetails(IEnumerable<UpdateAccountRequest> accounts)
+    {
+
+        List<Task> tasks = new();
+        foreach (var account in accounts)
+        {
+            tasks.Add(dataAccess.UpdateAccountPrimaryFieldsAsync
+            (
+                account.Id,
+                account.Name,
+                account.Type
+            ));
+        }
+        await Task.WhenAll(tasks.ToArray());
     }
 }
