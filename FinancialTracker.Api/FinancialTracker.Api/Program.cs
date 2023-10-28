@@ -1,6 +1,8 @@
-﻿using FinancialTracker.Api;
+﻿using System.Text.Json.Serialization;
+using FinancialTracker.Api;
 using FinancialTracker.Api.Configuration;
 using FinancialTracker.Api.Endpoints;
+using FinancialTracker.Api.Helpers;
 using FinancialTracker.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,14 +44,28 @@ builder.Services
     .AddScoped<IAuthenicationService, AuthenicationService>()
     .AddScoped<ICopilotOnboardService, CopilotOnboardService>()
     .AddSingleton<IFinancialDataAccess, FinancialDataAccess>()
-    .AddSingleton<FinancialDataService>();
+    .AddSingleton<IFinancialDataService, FinancialDataService>()
+    .ConfigureHttpJsonOptions(o =>
+    {
+        o.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    })
+    .Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(o =>
+    {
+        // Configured to support swagger enums as strings 
+        // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2293
+        o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Logging.AddConsole();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(o =>
+{
+    o.AddSecurityDefinition("Bearer", ApiSpecHelper.SecurityScheme);
+    o.AddSecurityRequirement(ApiSpecHelper.SecurityReq);
+});
 
 var app = builder.Build();
 

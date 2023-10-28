@@ -108,7 +108,8 @@ public class AuthenicationService : IAuthenicationService
 
             SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(keyStr));
             SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
-            DateTime expires = DateTime.Now.AddMinutes(30);
+            int expireMinutes = 30;
+            DateTime expires = DateTime.Now.AddMinutes(expireMinutes);
 
             var token = new JwtSecurityToken(
                 issuer: "https://localhost:5001",
@@ -122,9 +123,9 @@ public class AuthenicationService : IAuthenicationService
             {
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
                 Message = "Login Successful",
-                Email = user.Email,
-                Success = true,
-                UserId = user.Id.ToString()
+                ExpiresIn = expireMinutes*60,
+                TokenType = "Bearer",
+                Success = true
             };
         }
         catch (System.Exception ex)

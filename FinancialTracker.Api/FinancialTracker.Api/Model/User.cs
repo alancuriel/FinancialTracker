@@ -11,4 +11,5 @@ public class User : MongoIdentityUser<Guid>
     public string LastName { get; set; } = string.Empty;
     public List<Guid> Accounts { get; set; } = new();
     public List<Guid> Categories { get; set; } = new();
+    public UserStatus Status { get; set; } = new();
 }
