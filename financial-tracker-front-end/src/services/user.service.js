@@ -44,7 +44,7 @@ function register(user) {
 }
 
 function getAll() {
-    return fetchWrapper.get(baseUrl);
+    return fetchWrapper.get(`${process.env.NEXT_PUBLIC_PUBLICAPI}/v1/financial/recent-transactions/31`);
 }
 
 function getById(id) {

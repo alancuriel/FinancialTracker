@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 import { Link } from '../../../components/Link';
 import { Layout } from '../../../components/account/Layout';
-import { userService, alertService } from '../../../services/user.service';
+import { userService } from '../../../services/user.service';
 
 export default Login;
 
@@ -46,7 +46,7 @@ function Login() {
                 //const returnUrl = router.query.returnUrl || '/';
                 router.push("/");
             })
-            .catch(alertService.error);
+            .catch();
     }
 
     return (
