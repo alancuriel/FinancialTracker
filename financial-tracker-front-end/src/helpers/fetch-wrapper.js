@@ -9,6 +9,7 @@ import { userService } from '../services/user.service';
 export const fetchWrapper = {
     get,
     post,
+    postFormFile,
     put,
     delete: _delete
 };
@@ -23,14 +24,26 @@ function get(url) {
 
 function post(url, body) {
     const requestOptions = {
-        
-        referrerPolicy: 'unsafe-url',
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeader(url) },
         credentials: 'include',
         body: JSON.stringify(body)
     };
     return fetch(url, requestOptions).then(handleResponse);
+}
+
+function postFormFile(url, file, fileName) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('fileName', file.name);
+    const requestOptions = {
+        method: 'POST',
+        headers: {  ...authHeader(url) },
+        credentials: 'include',
+        body: formData
+    };
+
+    return fetch(url, requestOptions).then(handleResponse)
 }
 
 function put(url, body) {

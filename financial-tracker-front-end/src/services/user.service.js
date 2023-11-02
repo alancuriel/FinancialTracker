@@ -7,7 +7,7 @@ import { fetchWrapper } from '../helpers/fetch-wrapper';
 
 console.log(process.env.NEXT_PUBLIC_PUBLICAPI)
 const baseUrl = `${process.env.NEXT_PUBLIC_PUBLICAPI}/api/v1/authenticate`;
-const userSubject = new BehaviorSubject(process.browser && JSON.parse(localStorage.getItem('user')));
+const userSubject = new BehaviorSubject((typeof window !== 'undefined') && JSON.parse(localStorage.getItem('user')));
 
 export const userService = {
     user: userSubject.asObservable(),
@@ -17,12 +17,13 @@ export const userService = {
     register,
     getAll,
     getById,
+    uploadFile,
     update,
     delete: _delete
 };
 
 async function login(email, password) {
-
+    
 
     const user = await fetchWrapper.post(`${baseUrl}/login`, { email, password });
     // publish user to subscribers and store in local storage to stay logged in between page refreshes
@@ -45,6 +46,11 @@ function register(user) {
 
 function getAll() {
     return fetchWrapper.get(`${process.env.NEXT_PUBLIC_PUBLICAPI}/v1/financial/recent-transactions/31`);
+}
+
+function uploadFile(file) {
+    const url = `${process.env.NEXT_PUBLIC_PUBLICAPI}/copilotupload`
+    return fetchWrapper.postFormFile(url, file, file.name);
 }
 
 function getById(id) {
