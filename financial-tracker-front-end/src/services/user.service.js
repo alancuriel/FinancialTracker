@@ -1,11 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
-import getConfig from 'next/config';
-import Router from 'next/navigation';
-
-
 import { fetchWrapper } from '../helpers/fetch-wrapper';
 
-console.log(process.env.NEXT_PUBLIC_PUBLICAPI)
 const baseUrl = `${process.env.NEXT_PUBLIC_PUBLICAPI}/api/v1/authenticate`;
 const userSubject = new BehaviorSubject((typeof window !== 'undefined') && JSON.parse(localStorage.getItem('user')));
 

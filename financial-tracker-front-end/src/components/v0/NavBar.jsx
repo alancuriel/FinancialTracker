@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import tiptop from "@/asset/tiptop.png";
+import tiptop from "~/asset/tiptop.png";
 
 export default function NavBar() {
   return (

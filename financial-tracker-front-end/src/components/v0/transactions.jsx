@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button } from "~/components/ui/button";
 import { Loader2 } from "lucide-react";
 import {
   TableHead,
@@ -8,12 +8,12 @@ import {
   TableCell,
   TableBody,
   Table,
-} from "@/components/ui/table";
+} from "~/components/ui/table";
 import {
   PopoverTrigger,
   PopoverContent,
   Popover,
-} from "@/components/ui/popover";
+} from "~/components/ui/popover";
 import NavBar from "~/components/v0/NavBar";
 import { userService } from "~/services/user.service";
 import { useEffect, useRef, useState } from "react";
