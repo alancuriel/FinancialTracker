@@ -1,12 +1,9 @@
 "use client";
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname, redirect } from 'next/navigation'
-
-import { Navigation } from '../components/navigation';
-
 import  Head  from 'next/head'
-import { userService } from '../services/user.service';
-import Transactions from  '~/components/v0/transactions'
+import { userService } from '@/services/user.service';
+import Transactions from  '@/components/v0/transactions'
 
 
 function Main({Component, pageProps}){
