@@ -10,6 +10,7 @@ public interface IFinancialDataAccess
     Task<IEnumerable<Account>> GetAccountsAsync(IEnumerable<Guid> guids);
     Task<List<Transaction>> GetTransactionsAsync(Account account);
     Task<List<Transaction>> GetTransactionsAfterDateAsync(Guid userId, DateTime date);
+    Task<IEnumerable<Category>> GetCategoriesAsync(IEnumerable<Guid> guids);
 
     //Create
     Task<List<string>> CreateTransactions(IEnumerable<Transaction> transactions);

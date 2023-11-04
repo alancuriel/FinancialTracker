@@ -15,11 +15,13 @@ import {
   Popover,
 } from "@/components/ui/popover";
 import NavBar from "@/components/v0/NavBar";
+import TransCategoryCard from "@/components/v0/TransCategoryCard";
 import { userService } from "@/services/user.service";
 import { useEffect, useRef, useState } from "react";
 
 export default function Component() {
   const [transactions, setTransactions] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef();
 
@@ -27,9 +29,16 @@ export default function Component() {
     let ignore = false;
     console.log("nice");
     async function startFetching() {
-      const trans = await userService.getAll();
+      const p1 = userService.getAll();
+      const p2 = userService.getCategories();
+
+      const trans = await p1;
+      const cats = await p2;
+
       if (!ignore) {
         setTransactions(trans);
+        console.log(cats);
+        setCategories(cats);
       }
     }
 
@@ -105,31 +114,19 @@ export default function Component() {
           </TableHeader>
           <TableBody>
             {transactions.map((t) => {
+              let category = categories.find((c) => c.id === t.categoryId);
+              let catColor = category ? category.color : "gray";
+              let catName = category ? category.name : "none"
               return (
                 <TableRow key={t.id}>
                   <TableCell>{t.date}</TableCell>
                   <TableCell>{t.name}</TableCell>
                   <TableCell>
-                    <span className="px-2 py-1 bg-red-200 text-red-800 rounded-md">
-                      <svg
-                        className=" w-4 h-4 inline-block mr-1"
-                        fill="none"
-                        height="24"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                        width="24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" />
-                        <path d="M7 7h.01" />
-                      </svg>
-                      Office
-                    </span>
+                    <TransCategoryCard
+                      name={catName}
+                      color={catColor}
+                    />
                   </TableCell>
-
                   {t.amount > 0 ? (
                     <TableCell className="text-right">${t.amount}</TableCell>
                   ) : (

@@ -11,6 +11,7 @@ export const userService = {
     logout,
     register,
     getAll,
+    getCategories,
     getById,
     uploadFile,
     update,
@@ -41,6 +42,18 @@ function register(user) {
 
 function getAll() {
     return fetchWrapper.get(`${process.env.NEXT_PUBLIC_PUBLICAPI}/v1/financial/recent-transactions/31`);
+}
+
+function  getCategories()  {
+    let cachedCats = (typeof window !== 'undefined') && localStorage.getItem('categories');
+
+    if (cachedCats !== null) {
+        return new Promise(function(resolve, reject) {
+            resolve(JSON.parse(cachedCats));
+          });
+    }
+
+    return fetchWrapper.get(`${process.env.NEXT_PUBLIC_PUBLICAPI}/v1/financial/categories`);
 }
 
 function uploadFile(file) {

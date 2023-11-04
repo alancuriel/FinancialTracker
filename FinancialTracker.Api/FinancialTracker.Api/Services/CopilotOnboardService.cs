@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
+using FinancialTracker.Api.Helpers;
 using FinancialTracker.Api.Mappers.CsvMappers;
 using FinancialTracker.Api.Model;
 using Microsoft.AspNetCore.Identity;
@@ -47,6 +48,8 @@ public class CopilotOnboardService : ICopilotOnboardService
 
             transactions.Add(newTransaction);
         }
+
+        categoryByNames.Values.SetCatColors();
 
         await Task.WhenAll(userManager.UpdateAsync(user),
             dataAccess.CreateCategoriesAsync(categoryByNames.Values),
