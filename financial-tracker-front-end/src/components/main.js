@@ -1,11 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useRouter, usePathname } from 'next/navigation'
-
-import { Navigation } from '../components/navigation';
-
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter, usePathname, redirect } from 'next/navigation'
 import  Head  from 'next/head'
-import { userService } from '../services/user.service';
+import { userService } from '@/services/user.service';
+import Transactions from  '@/components/v0/transactions'
 
 
 function Main({Component, pageProps}){
@@ -13,12 +11,12 @@ function Main({Component, pageProps}){
   const pathname = usePathname();
   const [user, setUser] = useState(null);
   const[authorized, setAuthorized] = useState(false);
-  const [initial, setInitial] = useState(true)
+  const initial = useRef(true)
 
  
   useEffect(() => {
-    console.log("hook")
-    if(initial === true){
+    if(initial.current === true){
+      console.log("hook")
     //run initial authentication check on load
     
     // on route change start - hide content by setting authorization to false
@@ -27,15 +25,17 @@ function Main({Component, pageProps}){
 
     authCheck(pathname);
     
-    
-    
 
     // on route change complete - run auth check 
+    userService.user.subscribe( u => {
+      authCheck(pathname)
+    })
+
     
 
     // unsubscribe from events in useEffect return function
     return () => {
-        setInitial(false)
+        initial.current = false
     }
 
   }}, [])
@@ -54,21 +54,16 @@ function authCheck(url) {
   }
 }
 
+
+
 return (
   <>
       <Head>
           <title>Financial Tracker</title>
-          
-          
-          
       </Head>
 
-      <div className={`app-container ${user ? 'bg-light' : ''}`}>
-          <Navigation />
-          {authorized 
-          //&&
-            //  <Component {...pageProps} />
-          }
+      <div className='app-container w-full'>
+          {authorized && <Transactions/>}
       </div>
   </>
 );

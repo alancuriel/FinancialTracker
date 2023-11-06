@@ -13,12 +13,18 @@ public static class FinancialEndpoints
     public const string COPILOT_UPLOAD_URL = "/copilotupload";
     public const string RECENT_TRANSACTIONS_URL = "/v1/financial/recent-transactions";
     public const string ACCOUNTS_URL = "/v1/financial/account";
+    public const string CATEGORIES_BATCH_URL = "/v1/financial/categories";
+
 
     public static void MapAppEndpoints(this WebApplication app)
     {
         app.MapPost(COPILOT_UPLOAD_URL, OnboardCsvFile)
             .WithOpenApi(ApiSpecHelper.CopilotUpload)
             .Produces<IList<Account>>()
+            .RequireAuthorization("user_basic");
+
+        app.MapGet(CATEGORIES_BATCH_URL, GetAllCategories)
+            .Produces<IList<Category>>()
             .RequireAuthorization("user_basic");
 
         app.MapPatch(ACCOUNTS_URL, UpdateAccounts)
@@ -28,6 +34,43 @@ public static class FinancialEndpoints
             .WithOpenApi(ApiSpecHelper.RecentTransactions)
             .Produces<List<Transaction>>()
             .RequireAuthorization("user_basic");
+    }
+
+    public static async Task<IResult> GetAllCategories(IAuthenicationService authenicationService,
+        HttpContext httpContext, IFinancialDataService service,
+        ILogger<FinancialEndpoint> logger)
+    {
+        User? user;
+
+        try
+        {
+            user = await authenicationService.GetCurrentUserAsync(httpContext);
+            if (user is null)
+            {
+                return Results.Unauthorized();
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("An error occured while retrieving User", ex);
+            throw;
+        }
+
+
+        IEnumerable<Category> categories;
+
+        try
+        {
+            categories = await service.GetCategoriessAsync(user);
+        }
+        catch (Exception)
+        {
+            GenericResponse response = new()
+            { Success = false, Message = "Error retrieving categories." };
+            return Results.BadRequest(response);
+        }
+
+        return Results.Ok(categories);
     }
 
     public static async Task<IResult> GetRecentTransactions(int days,
@@ -75,7 +118,7 @@ public static class FinancialEndpoints
     }
 
     public static async Task<IResult> UpdateAccounts(List<UpdateAccountRequest> accounts,
-        IAuthenicationService authenicationService, HttpContext httpContext, 
+        IAuthenicationService authenicationService, HttpContext httpContext,
         IFinancialDataService service, ILogger<FinancialEndpoint> logger)
     {
         User? user;
@@ -108,7 +151,7 @@ public static class FinancialEndpoints
         await service.UpdateAccountDetails(accounts);
 
         return Results
-            .Ok( new { AccountsUpdated = accounts.Select(a => a.Id).ToArray()});
+            .Ok(new { AccountsUpdated = accounts.Select(a => a.Id).ToArray() });
     }
 
     public static async Task<IResult> OnboardCsvFile(IFormFile file,

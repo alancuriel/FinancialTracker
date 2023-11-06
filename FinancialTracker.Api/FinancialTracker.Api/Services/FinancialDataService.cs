@@ -20,7 +20,13 @@ public class FinancialDataService : IFinancialDataService
     public async Task<IEnumerable<Account>> GetAccountsAsync(User user)
     {
         var accounts = await dataAccess.GetAccountsAsync(user.Accounts);
-        return accounts.ToList();
+        return accounts;
+    }
+
+    public async Task<IEnumerable<Category>> GetCategoriessAsync(User user)
+    {
+        var categories = await dataAccess.GetCategoriesAsync(user.Categories);
+        return categories;
     }
 
     public async Task UpdateAccountDetails(IEnumerable<UpdateAccountRequest> accounts)

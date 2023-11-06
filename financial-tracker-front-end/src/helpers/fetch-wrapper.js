@@ -9,6 +9,7 @@ import { userService } from '../services/user.service';
 export const fetchWrapper = {
     get,
     post,
+    postFormFile,
     put,
     delete: _delete
 };
@@ -23,14 +24,26 @@ function get(url) {
 
 function post(url, body) {
     const requestOptions = {
-        
-        referrerPolicy: 'unsafe-url',
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeader(url) },
         credentials: 'include',
         body: JSON.stringify(body)
     };
     return fetch(url, requestOptions).then(handleResponse);
+}
+
+function postFormFile(url, file, fileName) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('fileName', file.name);
+    const requestOptions = {
+        method: 'POST',
+        headers: {  ...authHeader(url) },
+        credentials: 'include',
+        body: formData
+    };
+
+    return fetch(url, requestOptions).then(handleResponse)
 }
 
 function put(url, body) {
@@ -56,10 +69,10 @@ function _delete(url) {
 function authHeader(url) {
     // return auth header with jwt if user is logged in and request is to the api url
     const user = userService.userValue;
-    const isLoggedIn = user && user.token;
-    const isApiUrl = url.startsWith(process.env.NEXT_PUBLIC_publicAPI);
+    const isLoggedIn = user && user.accessToken;
+    const isApiUrl = url.startsWith(process.env.NEXT_PUBLIC_PUBLICAPI);
     if (isLoggedIn && isApiUrl) {
-        return { Authorization: `Bearer ${user.token}` };
+        return { Authorization: `Bearer ${user.accessToken}` };
     } else {
         return {};
     }

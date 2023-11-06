@@ -50,6 +50,19 @@ public class FinancialDataAccess : IFinancialDataAccess
         return results.ToList();
     }
 
+    public async Task<IEnumerable<Category>> GetCategoriesAsync(IEnumerable<Guid> guids)
+    {
+        IMongoCollection<Category> categoryCollection = 
+            ConnectToMongo<Category>(CategoriesCollection);
+
+        FilterDefinition<Category> filter = Builders<Category>
+            .Filter.In(c => c.Id, guids);
+
+        var results = await categoryCollection.FindAsync(filter);
+
+        return results.ToEnumerable();
+    }
+
     public async Task<List<string>> CreateTransactions(IEnumerable<Transaction> transactions)
     {
         IMongoCollection<Transaction> transactionCollection =
