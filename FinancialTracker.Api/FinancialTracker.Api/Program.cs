@@ -34,9 +34,11 @@ builder.Services.AddCors(options =>
     {
         options.AddPolicy("corsPolicy", builder =>
         {
-            builder.AllowAnyHeader()
-                .WithMethods("POST", "GET")
-                .WithOrigins("https://domain1.com", "https://domain2.com");
+            builder.WithOrigins("https://financial-tracker-taupe.vercel.app",
+                    "https://financial-tracker-git-main-alancuriel.vercel.app")
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .AllowAnyMethod();
         });
     }
 });
