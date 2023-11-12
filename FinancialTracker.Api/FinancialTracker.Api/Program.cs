@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.VerifySecrets();
 
+builder.Services.AddHealthChecks();
+
 builder.Services
         .AddAuthorizationBuilder()
         .AddPolicy(AuthorizationRoles.USER_POLICY, policy =>
@@ -48,12 +50,16 @@ builder.Services
     .ConfigureHttpJsonOptions(o =>
     {
         o.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        o.SerializerOptions.DefaultIgnoreCondition = 
+            JsonIgnoreCondition.WhenWritingNull;
     })
     .Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(o =>
     {
         // Configured to support swagger enums as strings 
         // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2293
         o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        o.JsonSerializerOptions.DefaultIgnoreCondition = 
+            JsonIgnoreCondition.WhenWritingNull;
     });
 
 builder.Logging.AddConsole();
@@ -81,6 +87,8 @@ app.UseCors("corsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHealthChecks("/healthz");
 
 app.MapAuthApis();
 app.MapAppEndpoints();

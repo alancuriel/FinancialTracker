@@ -7,7 +7,7 @@ public static class FinancialHelper
 
     public static void SetCatColors(this IEnumerable<Category> categories)
     {
-        short i = 0;
+        ushort i = 0;
 
         foreach (var category in categories)
         {

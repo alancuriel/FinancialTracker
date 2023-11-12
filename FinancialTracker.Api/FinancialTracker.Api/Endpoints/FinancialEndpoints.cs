@@ -14,6 +14,7 @@ public static class FinancialEndpoints
     public const string RECENT_TRANSACTIONS_URL = "/v1/financial/recent-transactions";
     public const string ACCOUNTS_URL = "/v1/financial/account";
     public const string CATEGORIES_BATCH_URL = "/v1/financial/categories";
+    public const string DASHBOARD_URL = "/v1/financial/dashboard";
 
 
     public static void MapAppEndpoints(this WebApplication app)
@@ -27,6 +28,10 @@ public static class FinancialEndpoints
             .Produces<IList<Category>>()
             .RequireAuthorization("user_basic");
 
+        app.MapGet(DASHBOARD_URL, GetDashboardData)
+            .Produces<DashboardResponse>()
+            .RequireAuthorization("user_basic");
+
         app.MapPatch(ACCOUNTS_URL, UpdateAccounts)
             .RequireAuthorization("user_basic");
 
@@ -35,6 +40,43 @@ public static class FinancialEndpoints
             .Produces<List<Transaction>>()
             .RequireAuthorization("user_basic");
     }
+
+    public static async Task<IResult> GetDashboardData(IAuthenicationService authenicationService,
+        HttpContext httpContext, IFinancialDataService service,
+        ILogger<FinancialEndpoint> logger)
+    {
+        User? user;
+
+        try
+        {
+            user = await authenicationService.GetCurrentUserAsync(httpContext);
+            if (user is null)
+            {
+                return Results.Unauthorized();
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("An error occured while retrieving User", ex);
+            throw;
+        }
+
+
+        DashboardResponse response;
+
+        try
+        {
+            response = await service.GetDashboardData(user);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("An error occured while retrieving dashboard", ex);
+            throw;
+        }
+
+        return Results.Ok(response);
+    }
+
 
     public static async Task<IResult> GetAllCategories(IAuthenicationService authenicationService,
         HttpContext httpContext, IFinancialDataService service,
