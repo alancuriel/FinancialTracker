@@ -62,7 +62,7 @@ public class CopilotOnboardService : ICopilotOnboardService
 
         return new()
         {
-            Name = record.Name,
+            Name = record.Name, 
             Amount = record.Amount,
             Date = DateTime.Parse(record.Date),
             Excluded = record.Excluded,
@@ -87,6 +87,11 @@ public class CopilotOnboardService : ICopilotOnboardService
 
     private static void AddOrCreateCategory(User user, Dictionary<string, Category> categoryByNames, CopilotTransaction record, Transaction newTransaction)
     {
+        if (string.IsNullOrEmpty(record.Category))
+        {
+            return;
+        }
+
         if (categoryByNames.TryGetValue(record.Category, out Category? category))
         {
             newTransaction.CategoryId = category.Id;

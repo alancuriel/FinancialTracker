@@ -8,4 +8,5 @@ public interface IFinancialDataService
     Task<IEnumerable<Account>> GetAccountsAsync(User user);
     Task UpdateAccountDetails(IEnumerable<UpdateAccountRequest> accounts);
     Task<IEnumerable<Category>> GetCategoriessAsync(User user);
+    Task<DashboardResponse> GetDashboardData(User user);
 }
